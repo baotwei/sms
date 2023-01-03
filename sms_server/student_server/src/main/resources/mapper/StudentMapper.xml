@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.auggie.student_server.mapper.StudentMapper">
+    <select id="findAll" resultType="Student">
+        SELECT s.sname, s.password,s.sno,s.sex,
+               s.birthday,s.nation,s.mnumber,
+               s.phone,s.address,s.remarks,m.mname FROM studentms.s s INNER JOIN studentms.m m ON m.mid = s.mnumber where s.state=1
+    </select>
+
+    <select id="findById" resultType="Student">
+        SELECT * FROM studentms.s WHERE sno = #{sno} and state=1;
+    </select>
+
+    <select id="findLastSid" resultType="Student">
+        select * from studentms.s where state=1 order by sid desc limit 1;
+    </select>
+
+    <select id="findBySearch" resultType="Student">
+        SELECT s.sname, s.password,s.sno,s.sex,
+        s.birthday,s.nation,s.mnumber,
+        s.phone,s.address,s.remarks,m.mname FROM studentms.s s INNER JOIN studentms.m m ON m.mid = s.mnumber
+        <where>
+            s.state=1
+            <if test="student.sno != null">
+                and s.sno = #{student.sno}
+            </if>
+            <if test="student.sname != null">
+                <if test="fuzzy == 0">
+                    AND s.sname = #{student.sname}
+                </if>
+                <if test="fuzzy == 1">
+                    AND s.sname LIKE CONCAT('%', #{student.sname}, '%')
+                </if>
+            </if>
+        </where>
+    </select>
+
+    <update id="updateById">
+        --         UPDATE studentms.s SET sname = '彭昊辉',
+        --         password =123,sex=0,
+        --         birthday=2022-12-05,
+        --         nation='汉族',phone=1255563354465,
+        --         mnumber=8,address=11,
+        --         remarks=111 WHERE sid = 4;
+        UPDATE studentms.s
+        <set>
+            <if test="student.sname != null">
+                sname = #{student.sname},
+            </if>
+            <if test="student.password != null">
+                password = #{student.password},
+            </if>
+            <if test="student.sex != null">
+                sex=#{student.sex},
+            </if>
+            <if test="student.birthday != null">
+                birthday=#{student.birthday},
+            </if>
+            <if test="student.nation != null">
+                nation=#{student.nation},
+            </if>
+            <if test="student.phone != null">
+                phone=#{student.phone},
+            </if>
+            <if test="student.mnumber != null">
+                mnumber=#{student.mnumber},
+            </if>
+            <if test="student.address != null">
+                address=#{student.address},
+            </if>
+            <if test="student.remarks != null">
+                remarks=#{student.remarks}
+            </if>
+        </set>
+        WHERE sid = #{student.sid} and state=1;
+    </update>
+
+    <update id="updateBySno">
+        --         UPDATE studentms.s SET sname = '彭昊辉',
+        --         password =123,sex=0,
+        --         birthday=2022-12-05,
+        --         nation='汉族',phone=1255563354465,
+        --         mnumber=8,address=11,
+        --         remarks=111 WHERE sid = 4;
+        UPDATE studentms.s
+        <set>
+            <if test="student.sname != null">
+                sname = #{student.sname},
+            </if>
+            <if test="student.password != null">
+                password = #{student.password},
+            </if>
+            <if test="student.sex != null">
+                sex=#{student.sex},
+            </if>
+            <if test="student.birthday != null">
+                birthday=#{student.birthday},
+            </if>
+            <if test="student.nation != null">
+                nation=#{student.nation},
+            </if>
+            <if test="student.phone != null">
+                phone=#{student.phone},
+            </if>
+            <if test="student.mnumber != null">
+                mnumber=#{student.mnumber},
+            </if>
+            <if test="student.address != null">
+                address=#{student.address},
+            </if>
+            <if test="student.remarks != null">
+                remarks=#{student.remarks}
+            </if>
+        </set>
+        WHERE sno = #{student.sno} and state=1;
+    </update>
+
+    <insert id="save">
+        INSERT INTO studentms.s (sname, password,sno,sex,
+                                 birthday,nation,mnumber,
+                                 phone,address,remarks,state
+        ) VALUES (#{student.sname}, #{student.password},#{student.sno},
+                  #{student.sex},#{student.birthday},#{student.nation},
+                  #{student.mnumber},#{student.phone},
+                  #{student.address},#{student.remarks},1
+                 )
+    </insert>
+
+
+
+    <!--    <delete id="deleteById">-->
+    <!--        DELETE FROM studentms.s WHERE sno = #{sno}-->
+    <!--    </delete>-->
+    <update id="deleteById">
+        update studentms.s set state=0 WHERE sno = #{sno}
+    </update>
+</mapper>

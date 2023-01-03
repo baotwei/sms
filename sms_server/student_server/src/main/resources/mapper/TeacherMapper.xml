@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.auggie.student_server.mapper.TeacherMapper">
+    <select id="findAll" resultType="Teacher">
+        SELECT * FROM studentms.t t INNER JOIN studentms.m m ON m.mid = t.mnumber where t.state=1
+    </select>
+
+    <select id="findBySearch" resultType="Teacher">
+        SELECT* FROM studentms.t t INNER JOIN studentms.m m ON m.mid = t.mnumber
+        <where>
+            t.state=1
+            <if test="tno != null">
+                and t.tno = #{tno}
+            </if>
+            <if test="tname != null">
+                <if test="fuzzy == 0">
+                    AND t.tname = #{tname}
+                </if>
+                <if test="fuzzy == 1">
+                    AND t.tname LIKE CONCAT('%', #{tname}, '%')
+                </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findLastTid" resultType="Teacher">
+        select * from studentms.t where state=1 order by tid desc limit 1 ;
+    </select>
+
+    <select id="findByTno" resultType="Teacher">
+        SELECT * FROM studentms.t WHERE tno = #{tno} and state=1;
+    </select>
+
+    <select id="findByTid" resultType="Teacher">
+        SELECT * FROM studentms.t WHERE tid = #{tid} and state=1;
+    </select>
+
+    <update id="updateById">
+        --         UPDATE studentms.t SET tname = '张三',
+        --                                password =123,sex=0,
+        --                                birthday=2022-12-05,
+        --                                nation='汉族',phone=1255563354465,
+        --                                posticon='高级教师',address=11,
+        --                                remarks=111 WHERE tid = 13;
+        UPDATE studentms.t
+        <set>
+            <if test="teacher.tname != null">
+                tname = #{teacher.tname},
+            </if>
+            <if test="teacher.password != null">
+                password = #{teacher.password},
+            </if>
+            <if test="teacher.sex != null">
+                sex=#{teacher.sex},
+            </if>
+            <if test="teacher.birthday != null">
+                birthday=#{teacher.birthday},
+            </if>
+            <if test="teacher.nation != null">
+                nation=#{teacher.nation},
+            </if>
+            <if test="teacher.phone != null">
+                phone=#{teacher.phone},
+            </if>
+            <if test="teacher.posticon != null">
+                posticon=#{teacher.posticon},
+            </if>
+            <if test="teacher.address != null">
+                address=#{teacher.address},
+            </if>
+            <if test="teacher.remarks != null">
+                remarks=#{teacher.remarks}
+            </if>
+        </set>
+        WHERE tid = #{teacher.tid} and state=1;
+    </update>
+
+    <insert id="save">
+        INSERT INTO studentms.t (tname, password,tno,sex,
+                                 birthday,nation,mnumber,
+                                 phone,posticon,address,remarks,state
+        ) VALUES (#{teacher.tname}, #{teacher.password},#{teacher.tno},
+                  #{teacher.sex},#{teacher.birthday},#{teacher.nation},
+                  #{teacher.mnumber},#{teacher.phone},#{teacher.posticon},
+                  #{teacher.address},#{teacher.remarks},1
+                 )
+    </insert>
+
+    <!--    <delete id="deleteById">-->
+    <!--        DELETE FROM studentms.t WHERE tid = #{tid}-->
+    <!--    </delete>-->
+    <update id="deleteById">
+        update studentms.t set state=0 WHERE tid = #{tid}
+    </update>
+</mapper>

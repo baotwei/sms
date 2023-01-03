@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.auggie.student_server.mapper.MajorMapper">
+
+    <resultMap id="BaseResultMap" type="com.auggie.student_server.entity.Major">
+        <result column="mid" property="mid"/>
+        <result column="mno" property="mno"/>
+        <result column="mname" property="mname"/>
+        <result column="mteacher" property="mteacher"/>
+        <result column="parentId" property="parentId"/>
+    </resultMap>
+    <resultMap id="NodeTreeResult" type="com.auggie.student_server.entity.Major"
+               extends="BaseResultMap">
+        <collection property="majorList" column="mid" ofType="com.auggie.student_server.entity.Major"
+                    javaType="java.util.ArrayList" select="nextNoteTree">
+        </collection>
+    </resultMap>
+
+
+
+    <select id="nextNoteTree" resultMap="NodeTreeResult">
+        select mid,mno,mname,mteacher,parentId
+        from m
+        where parentId=#{mid} and state=1
+    </select>
+    <select id="getMajorList" resultMap="NodeTreeResult">
+        select
+            mid,mno,mname,mteacher,parentId
+        from m
+        where parentId=0 and state=1
+    </select>
+
+
+</mapper>
